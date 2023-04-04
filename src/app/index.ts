@@ -124,10 +124,15 @@ export async function createApp() {
         }
       }
     
-      throw new Error(`No route found from ${sourceAirport.id} to ${destinationAirport.id}`);
+      return null;
     };
 
     const shortestRoute = findShortestRoute(sourceAirport, destinationAirport, maxStops);
+
+    if (!shortestRoute) {
+      return res.status(404).send(`No valid route from ${source} to ${destination} found`);
+    }
+
     const distance = shortestRoute.reduce((sum, route) => sum + route.distance, 0);
     const hops = shortestRoute.map((route) => route.source.iata);
     hops.push(shortestRoute[shortestRoute.length - 1].destination.iata);
